@@ -1,0 +1,192 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>SYCCHILE 3.000 · Entrega de alimentos</title>
+<style>
+:root{--fs-base:1.25rem;--btn-h:3.5rem;--bg:#f8fafc;--card:#ffffff;--ink:#0f172a;--muted:#334155;--line:#94a3b8;--ok:#166534;--ok-bg:#dcfce7;--warn:#7c2d12;--warn-bg:#ffedd5;--info:#075985;--focus:#f97316}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,-apple-system,"Segoe UI",Arial,sans-serif;font-size:var(--fs-base);line-height:1.5;background:var(--bg);color:var(--ink)}
+main{max-width:720px;margin:0 auto;padding:16px}
+h1{font-size:1.8rem;margin:12px 0 4px}
+h2{font-size:1.4rem;margin:0 0 8px}
+.aviso{background:var(--warn-bg);color:var(--warn);border:2px solid var(--warn);border-radius:12px;padding:10px 14px;font-size:1rem}
+.tarjeta{background:var(--card);border:2px solid var(--line);border-radius:16px;padding:20px;margin:16px 0}
+label{display:block;font-weight:700;margin-bottom:8px}
+input{width:100%;min-height:var(--btn-h);font-size:var(--fs-base);padding:8px 14px;border:2px solid var(--ink);border-radius:12px;background:#fff;color:var(--ink)}
+button{min-height:var(--btn-h);font-size:var(--fs-base);font-weight:700;padding:8px 22px;border-radius:12px;border:2px solid var(--ok);background:var(--ok);color:#fff;cursor:pointer;margin:12px 12px 0 0}
+button.sec{background:#fff;color:var(--ok)}
+button:focus-visible,input:focus-visible,summary:focus-visible,a:focus-visible{outline:4px solid var(--focus);outline-offset:2px}
+.calma{color:var(--info);font-weight:700;margin:0 0 12px}
+.nombre{font-size:1.6rem;font-weight:700;margin:8px 0}
+.error{color:var(--warn);font-weight:700;min-height:1.5em;margin:8px 0 0}
+.resultado{border-radius:12px;padding:16px;font-size:1.4rem;font-weight:700}
+.resultado.ok{background:var(--ok-bg);color:var(--ok);border:2px solid var(--ok)}
+.resultado.warn{background:var(--warn-bg);color:var(--warn);border:2px solid var(--warn)}
+ul{padding-left:22px;margin:0}
+li{margin:6px 0}
+summary{cursor:pointer;font-weight:700;min-height:var(--btn-h);display:flex;align-items:center}
+dl{margin:8px 0}
+dt{font-weight:700}
+dd{margin:0 0 8px}
+footer{font-size:1rem;color:var(--muted);margin:24px 0}
+a{color:var(--info)}
+[hidden]{display:none!important}
+</style>
+</head>
+<body>
+<main>
+<p class="aviso" role="note">ℹ️ Prototipo de demostración (entorno de prueba): ingresa solo datos ficticios. Los datos quedan solo en este navegador.</p>
+<header>
+<h1>Entrega de alimentos</h1>
+<p>Ciclo <strong id="ciclo">1</strong> · Entregas registradas: <strong id="contador">0</strong></p>
+</header>
+
+<section class="tarjeta" id="paso1" aria-labelledby="t1">
+<h2 id="t1">Paso 1 de 3: ¿Quién recibe?</h2>
+<p class="calma" id="calma">Con calma: si te equivocas, no pasa nada. Aquí no se borra ni se rompe nada.</p>
+<label for="identidad">Escribe el RUT o el nombre de la persona</label>
+<input id="identidad" type="text" autocomplete="off" maxlength="60">
+<p class="error" id="error" role="alert"></p>
+<button id="btnSiguiente" type="button">Continuar</button>
+</section>
+
+<section class="tarjeta" id="paso2" aria-labelledby="t2" hidden>
+<h2 id="t2">Paso 2 de 3: Revisa</h2>
+<p>Vas a registrar a:</p>
+<p class="nombre" id="confirmaNombre"></p>
+<button id="btnConfirmar" type="button">Sí, registrar</button>
+<button id="btnVolver" class="sec" type="button">No, volver</button>
+</section>
+
+<section class="tarjeta" id="paso3" aria-labelledby="t3" hidden>
+<h2 id="t3">Paso 3 de 3: Resultado</h2>
+<div id="resultado" class="resultado" role="status"></div>
+<button id="btnOtra" type="button">Registrar otra entrega</button>
+</section>
+
+<section class="tarjeta">
+<h2>Entregas de este ciclo</h2>
+<ul id="lista"></ul>
+<p id="vacio">Todavía no hay entregas.</p>
+</section>
+
+<section class="tarjeta">
+<button id="btnAyuda" class="sec" type="button" aria-expanded="false" aria-controls="ayuda">❓ Ayuda</button>
+<ol id="ayuda" hidden>
+<li>Escribe el RUT o el nombre y presiona «Continuar».</li>
+<li>Revisa que el nombre esté bien y presiona «Sí, registrar».</li>
+<li>Lee el resultado. Si dice que ya recibió, no se entrega de nuevo.</li>
+</ol>
+</section>
+
+<details class="tarjeta" id="metricas">
+<summary>Métricas del piloto (para la coordinación)</summary>
+<dl>
+<dt>Tiempo hasta la primera entrega (meta: 60 s o menos)</dt><dd id="mTtfv">—</dd>
+<dt>Registros al primer intento (meta: 90% o más)</dt><dd id="mPrimero">—</dd>
+<dt>Duplicados bloqueados</dt><dd id="mDuplicados">0</dd>
+<dt>Autonomía: registros sin ayuda entre los últimos 5 (meta: 4 o más)</dt><dd id="mAyuda">—</dd>
+</dl>
+<p>Estas cifras son solo de este navegador y no guardan nombres ni RUT.</p>
+<button id="btnReiniciar" class="sec" type="button">Reiniciar demostración</button>
+</details>
+
+<footer>
+<p>Panel completo de coordinación: <a href="https://almendaresjorge24-maker.github.io/sycchile-3000/" target="_blank" rel="noopener">SYCCHILE 3.000, versión completa</a></p>
+<p>© 2026 Jorge Almendares Aros. Todos los derechos reservados.</p>
+</footer>
+</main>
+<script>
+(function () {
+  'use strict';
+  var CLAVE = 'sycchile_vol_v1', CLAVE_M = 'sycchile_vol_metricas_v1';
+  var t0 = Date.now(), ttfvTomado = false, errores = 0, pendiente = null, ayudaPendiente = false;
+  var $ = function (id) { return document.getElementById(id); };
+  function leer(k, def) { try { var d = JSON.parse(localStorage.getItem(k)); return d || def; } catch (e) { return def; } }
+  function guardar(k, v) { try { localStorage.setItem(k, JSON.stringify(v)); } catch (e) {} }
+  var estado = leer(CLAVE, { ciclo: 1, registros: [] });
+  var met = leer(CLAVE_M, { registros: 0, primerIntento: 0, duplicados: 0, ayudas: 0, ttfv: [], usoAyuda: [] });
+  if (!met.usoAyuda) met.usoAyuda = [];
+
+  function validarRut(c) {
+    var cuerpo = c.slice(0, -1), dv = c.slice(-1).toLowerCase(), suma = 0, f = 2;
+    for (var i = cuerpo.length - 1; i >= 0; i--) { suma += parseInt(cuerpo[i], 10) * f; f = f === 7 ? 2 : f + 1; }
+    var r = 11 - (suma % 11);
+    return dv === (r === 11 ? '0' : r === 10 ? 'k' : String(r));
+  }
+  function interpretar(texto) {
+    var limpio = String(texto).replace(/[.\-\s]/g, '');
+    if (/^\d{7,8}[\dkK]$/.test(limpio)) {
+      if (!validarRut(limpio)) return { error: 'RUT inválido: revisa el último número o letra.' };
+      var cuerpo = limpio.slice(0, -1).replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+      return { clave: 'rut:' + limpio.toLowerCase(), mostrar: cuerpo + '-' + limpio.slice(-1).toUpperCase() };
+    }
+    var nombre = String(texto).trim().replace(/\s+/g, ' ').replace(/[\s.,;:\-]+$/, '');
+    var norm = nombre.normalize('NFD').replace(/[\u0300-\u036f]/g, '').toLowerCase().replace(/[^a-z0-9]+/g, ' ').trim();
+    if (norm.replace(/ /g, '').length < 3 || !/[a-z]/.test(norm)) return { error: 'Escribe un RUT válido o un nombre de al menos 3 letras.' };
+    return { clave: 'nom:' + norm, mostrar: nombre };
+  }
+  function mostrar(paso) { ['paso1', 'paso2', 'paso3'].forEach(function (p) { $(p).hidden = (p !== paso); }); }
+  function resultado(clase, texto) { var r = $('resultado'); r.className = 'resultado ' + clase; r.textContent = texto; mostrar('paso3'); }
+  function pintarLista() {
+    var ul = $('lista'); ul.textContent = '';
+    estado.registros.slice().reverse().forEach(function (r) {
+      var li = document.createElement('li'); li.textContent = r.nombre + ' · ' + r.hora; ul.appendChild(li);
+    });
+    $('vacio').hidden = estado.registros.length > 0;
+    $('contador').textContent = estado.registros.length;
+    $('ciclo').textContent = estado.ciclo;
+  }
+  function mediana(a) { if (!a.length) return null; var s = a.slice().sort(function (x, y) { return x - y; }), m = Math.floor(s.length / 2); return s.length % 2 ? s[m] : (s[m - 1] + s[m]) / 2; }
+  function pintarMetricas() {
+    var m = mediana(met.ttfv);
+    $('mTtfv').textContent = m === null ? '—' : (m / 1000).toFixed(1).replace('.', ',') + ' segundos';
+    $('mPrimero').textContent = met.registros ? Math.round(100 * met.primerIntento / met.registros) + '%' : '—';
+    $('mDuplicados').textContent = met.duplicados;
+    var u = met.usoAyuda.slice(-5);
+    $('mAyuda').textContent = u.length ? u.filter(function (x) { return x === 0; }).length + ' de ' + u.length : '—';
+  }
+  function siguiente() {
+    var id = interpretar($('identidad').value);
+    if (id.error) { errores++; $('error').textContent = id.error; $('identidad').focus(); return; }
+    $('error').textContent = '';
+    if (estado.registros.some(function (r) { return r.clave === id.clave; })) {
+      errores++; met.duplicados++; guardar(CLAVE_M, met); pintarMetricas();
+      resultado('warn', '⚠️ ' + id.mostrar + ' ya recibió alimentos en este ciclo. No se entrega de nuevo.');
+      return;
+    }
+    pendiente = id; $('confirmaNombre').textContent = id.mostrar; mostrar('paso2');
+  }
+  function confirmar() {
+    if (!pendiente) return;
+    var hora = new Date().toLocaleTimeString('es-CL', { hour: '2-digit', minute: '2-digit' });
+    estado.registros.push({ nombre: pendiente.mostrar, clave: pendiente.clave, hora: hora, ciclo: estado.ciclo });
+    guardar(CLAVE, estado);
+    met.registros++; if (errores === 0) met.primerIntento++;
+    met.usoAyuda.push(ayudaPendiente ? 1 : 0); if (met.usoAyuda.length > 20) met.usoAyuda.shift(); ayudaPendiente = false;
+    if (!ttfvTomado) { met.ttfv.push(Date.now() - t0); ttfvTomado = true; }
+    guardar(CLAVE_M, met);
+    resultado('ok', '✅ ¡Muy bien! ' + pendiente.mostrar + ' ya recibió sus alimentos.');
+    pendiente = null; errores = 0; pintarLista(); pintarMetricas();
+  }
+  function otra() { $('identidad').value = ''; $('error').textContent = ''; errores = 0; pendiente = null; mostrar('paso1'); $('identidad').focus(); }
+  $('btnSiguiente').addEventListener('click', siguiente);
+  $('identidad').addEventListener('keydown', function (e) { if (e.key === 'Enter') siguiente(); });
+  $('btnConfirmar').addEventListener('click', confirmar);
+  $('btnVolver').addEventListener('click', function () { pendiente = null; mostrar('paso1'); $('identidad').focus(); });
+  $('btnOtra').addEventListener('click', otra);
+  $('btnAyuda').addEventListener('click', function () {
+    var a = $('ayuda'), abrir = a.hidden; a.hidden = !abrir; this.setAttribute('aria-expanded', String(abrir));
+    if (abrir) { met.ayudas++; ayudaPendiente = true; guardar(CLAVE_M, met); pintarMetricas(); }
+  });
+  $('btnReiniciar').addEventListener('click', function () {
+    estado = { ciclo: 1, registros: [] }; met = { registros: 0, primerIntento: 0, duplicados: 0, ayudas: 0, ttfv: [], usoAyuda: [] }; ayudaPendiente = false;
+    guardar(CLAVE, estado); guardar(CLAVE_M, met); pintarLista(); pintarMetricas(); otra();
+  });
+  pintarLista(); pintarMetricas();
+})();
+</script>
+</body>
+</html>
