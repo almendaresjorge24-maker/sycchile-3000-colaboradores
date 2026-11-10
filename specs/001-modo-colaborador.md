@@ -1,6 +1,6 @@
 # Spec 001 — Modo colaborador: registrar una entrega en 3 pasos
 
-Estado: borrador a la espera de mi validación (sección 7).
+Estado: validada por Jorge Almendares Aros.
 Origen: elaborada con asistencia de inteligencia artificial generativa, a partir de un prompt de mi autoría. Su mejora y validación quedan bajo mi responsabilidad.
 Relación: característica nueva de la iniciativa Banco Solidario de Alimentos, dentro de la marca SYCCHILE 3.000. Se construye sobre el proyecto de la clase 2 (repositorio `sycchile-3000`), que permanece intacto.
 
@@ -51,6 +51,6 @@ Las metas son de diseño y las fijé yo para este ejercicio. La página mide su 
   La regla comparaba solo tildes, mayúsculas y espacios. Se amplió el CA3 a la puntuación y se agregó su prueba antes de corregir el código.
 
 ## 7. Validación (la completo yo)
-- [ ] Revisé el problema, los criterios y las métricas, y reflejan el trabajo en terreno.
-- Ajustes que hice a esta spec: _______________________________________________
-- Validada por: Jorge Almendares Aros — Fecha: ____ / ____ / ________
+- [x] Revisé el problema, los criterios y las métricas, y reflejan el trabajo en terreno.
+- Ajustes que hice a esta spec: Incorporé mis aclaraciones: el principio «aprender usando», la falta de conocimientos de logística del equipo y la regla de puntuación en nombres.
+- Validada por: Jorge Almendares Aros — Fecha: 10/11/2026
